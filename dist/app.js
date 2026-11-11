@@ -34,6 +34,8 @@
     fish:'<path d="M15 12c-2.3-4.7-7.8-6.2-12 0 4.2 6.2 9.7 4.7 12 0Zm0 0 5-4v8l-5-4Zm-7-1h.01"/>',
     music:'<path d="M9 17V5l10-2v12M9 8l10-2"/><ellipse cx="6" cy="17" rx="3" ry="2"/><ellipse cx="16" cy="15" rx="3" ry="2"/>',
     castle:'<path d="M3 21V8h4v3h3V4h4v7h3V8h4v13H3Zm7 0v-4a2 2 0 1 1 4 0v4"/>',
+    moon:'<path d="M20.8 14.1A9 9 0 0 1 9.9 3.2a9 9 0 1 0 10.9 10.9Z"/>',
+    sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4m11.2 11.2L19 19M5 19l1.4-1.4M17.6 6.4 19 5"/>',
     leaf:'<path d="M6 17c-5-7 4-14 14-13 1 10-6 19-13 14m-3 3L15 10"/>'
   };
   const icon = (name) => '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[name] ?? paths.compass)+'</svg>';
@@ -57,6 +59,14 @@
   const status = document.querySelector("#status");
   const menuToggle = document.querySelector("#menu-toggle");
   const scrim = document.querySelector(".scrim");
+  const themeToggle = document.querySelector("#theme-toggle");
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  const themeKey = "koholint-field-guide.theme";
+  const systemTheme = matchMedia("(prefers-color-scheme: dark)");
+  const themeOptions = [["system","Use device setting"],["light","Light"],["dark","Dark"]];
+  const normalizeTheme = (value) => value === "light" || value === "dark" ? value : "system";
+  let themePreference = "system";
+  try { themePreference = normalizeTheme(localStorage.getItem(themeKey)); } catch {}
   document.querySelector("#brand-icon").innerHTML = icon("compass");
   menuToggle.innerHTML = icon("menu");
   const esc = (input) => String(input ?? "").replace(/[&<>"']/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
@@ -159,6 +169,21 @@
   }
   function speak(text) {
     status.textContent = text;
+  }
+  function applyTheme() {
+    const dark = themePreference === "system" ? systemTheme.matches : themePreference === "dark";
+    document.documentElement.dataset.theme = dark ? "dark" : "light";
+    themeColor.content = dark ? "#102019" : "#172d25";
+    themeToggle.innerHTML = icon(dark ? "sun" : "moon");
+    const label = dark ? "Switch to light mode" : "Switch to dark mode";
+    themeToggle.setAttribute("aria-label", label);
+    themeToggle.title = label;
+    themeToggle.hidden = false;
+  }
+  function setTheme(value) {
+    themePreference = normalizeTheme(value);
+    try { localStorage.setItem(themeKey, themePreference); } catch {}
+    applyTheme();
   }
   const isOpen = (chapter) => !state.spoilers || chapter <= state.ceiling;
   const isChecked = (row) => state.checks[row.id] === true;
@@ -395,8 +420,9 @@
   function settings() {
     importState = undefined;
     const ceilings = chapters.map((chapter) => [chapter.id,"Chapter "+chapter.id]);
-    displayDialog("Guide settings",'<p>Choose how far the guide can reveal. Checklist searches follow the same spoiler setting.</p>'+
-      '<form id="spoiler-form"><label><input type="checkbox" name="spoilers"'+(state.spoilers ? " checked" : "")+'> Hide later chapters</label>'+
+    displayDialog("Guide settings",'<p>Choose your theme and how far the guide can reveal.</p>'+
+      '<form id="guide-settings"><label class="field">Appearance<select class="select" name="theme">'+options(themeOptions,themePreference)+'</select></label>'+
+      '<label><input type="checkbox" name="spoilers"'+(state.spoilers ? " checked" : "")+'> Hide later chapters</label>'+
       '<label class="field">Reveal through<select class="select" name="ceiling">'+options(ceilings,state.ceiling)+'</select></label>'+
       '<div class="controls"><button type="submit" class="button">Save settings</button></div></form>'+
       '<hr><p>Export a copy of all checks, spoiler settings and run logs. Importing replaces the current progress.</p>'+
@@ -423,6 +449,11 @@
     if (!button) return;
     const {action,value} = button.dataset;
     const run = state.runs[state.mode];
+    if (action === "toggle-theme") {
+      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      setTheme(next);
+      speak(next === "dark" ? "Dark mode enabled." : "Light mode enabled.");
+    }
     if (action === "toggle-menu") {
       if (rail.classList.contains("open")) closeMenu(true);
       else {
@@ -562,9 +593,10 @@
     }
   });
   document.addEventListener("submit",(event) => {
-    if (event.target.id !== "spoiler-form") return;
+    if (event.target.id !== "guide-settings") return;
     event.preventDefault();
     const fields = new FormData(event.target);
+    setTheme(fields.get("theme"));
     state.spoilers = fields.has("spoilers");
     state.ceiling = readChapter(fields.get("ceiling"));
     if (!isOpen(state.chapter)) state.chapter = state.ceiling;
@@ -573,7 +605,7 @@
     hideDialog();
     if (active.view === "guide" && !isOpen(active.chapter)) location.hash = "#guide/"+state.chapter;
     else draw();
-    speak("Spoiler settings saved.");
+    speak("Guide settings saved.");
   });
   document.addEventListener("toggle",(event) => {
     if (event.target.matches?.(".route-group[data-section]") && event.target.isConnected && active.view==="guide" && routeFilter==="all" && routeStatus==="all") {
@@ -596,11 +628,19 @@
     parseRoute();
   });
   window.addEventListener("storage",(event) => {
+    if (event.key === themeKey || event.key === null) {
+      themePreference = normalizeTheme(event.newValue);
+      applyTheme();
+    }
     if (event.key === storageKey) {
       state = loadState();
       if (!isOpen(active.chapter) && active.view === "guide") location.hash = "#guide/"+state.ceiling;
       else draw();
     }
   });
+  systemTheme.addEventListener("change",() => {
+    if (themePreference === "system") applyTheme();
+  });
+  applyTheme();
   parseRoute(true);
 })();

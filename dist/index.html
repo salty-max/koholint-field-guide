@@ -6,6 +6,14 @@
   <meta name="theme-color" content="#172d25">
   <meta name="description" content="A spoiler-conscious, interactive 100% field guide to Link’s Awakening on Nintendo Switch.">
   <title>Koholint Field Guide · Link’s Awakening</title>
+  <script>
+    (() => {
+      let preference;
+      try { preference = localStorage.getItem("koholint-field-guide.theme"); } catch {}
+      const system = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = ["light", "dark"].includes(preference) ? preference : system;
+    })();
+  </script>
   <link rel="stylesheet" href="style.css">
   <script>window.KOHOLINT_CHAPTERS = [];</script>
   <script defer src="early.js"></script>
@@ -20,7 +28,10 @@
     <button class="mobile-menu icon-button" type="button" data-action="toggle-menu" aria-label="Open chapters" aria-controls="chapter-rail" aria-expanded="false" id="menu-toggle"></button>
     <a class="brand" href="#guide" aria-label="Koholint Field Guide home"><span class="brand-icon" id="brand-icon"></span><span class="brand-type"><strong>Koholint</strong><small>FIELD GUIDE</small></span></a>
     <nav id="top-nav" class="top-nav" aria-label="Main navigation"></nav>
-    <button class="save-status" data-action="settings" id="save-status" type="button"><span></span>Progress saved</button>
+    <div class="topbar-actions">
+      <button class="icon-button theme-toggle" id="theme-toggle" data-action="toggle-theme" type="button" hidden></button>
+      <button class="save-status" data-action="settings" id="save-status" type="button"><span></span>Progress saved</button>
+    </div>
   </header>
   <div class="layout">
     <aside class="rail" id="chapter-rail" aria-label="Chapters"></aside>
