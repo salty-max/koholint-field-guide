@@ -1,5 +1,5 @@
-@font-face{font-family:"DM Sans";src:url("assets/dm-sans.woff2") format("woff2");font-weight:400 700;font-display:swap}
-@font-face{font-family:"Playfair Display";src:url("assets/playfair.woff2") format("woff2");font-weight:500 700;font-display:swap}
+@font-face{font-family:"DM Sans";src:url("/fonts/dm-sans.woff2") format("woff2");font-weight:400 700;font-display:swap}
+@font-face{font-family:"Playfair Display";src:url("/fonts/playfair.woff2") format("woff2");font-weight:500 700;font-display:swap}
 :root{color-scheme:light;--forest:#152b23;--pine:#1b342a;--fern:#325d48;--moss:#627b68;--gold:#d8ba77;--paper:#f6f5ee;--white:#fffef9;--ink:#25342b;--muted:#5e6b61;--line:#e1e3d8;--serif:"Playfair Display",Georgia,serif;--sans:"DM Sans",system-ui,sans-serif;--bar:69px;--rail:249px}
 *{box-sizing:border-box}
 html{scroll-padding-top:calc(var(--bar) + 24px);scrollbar-color:#a5ad9d var(--paper)}
@@ -64,15 +64,15 @@ h1,h2,h3{line-height:1.17}
   var(--chapter-banner,none) var(--chapter-focus,center) / cover no-repeat,
   #284c39;
 }
-.hero[data-chapter="1"]{--chapter-banner:url("assets/tail-cave.webp");--chapter-mobile-focus:56% 50%;--chapter-mobile-shade:#14281d50}
-.hero[data-chapter="2"]{--chapter-banner:url("assets/bottle-grotto.webp")}
-.hero[data-chapter="3"]{--chapter-banner:url("assets/key-cavern.webp")}
-.hero[data-chapter="4"]{--chapter-banner:url("assets/anglers-tunnel.webp")}
-.hero[data-chapter="5"]{--chapter-banner:url("assets/catfishs-maw.webp")}
-.hero[data-chapter="6"]{--chapter-banner:url("assets/face-shrine.webp")}
-.hero[data-chapter="7"]{--chapter-banner:url("assets/eagles-tower.webp");--chapter-focus:center 10%}
-.hero[data-chapter="8"]{--chapter-banner:url("assets/turtle-rock.webp")}
-.hero[data-chapter="9"]{--chapter-banner:url("assets/wind-fishs-egg.webp")}
+.hero[data-chapter="1"]{--chapter-banner:url("./assets/tail-cave.webp");--chapter-mobile-focus:56% 50%;--chapter-mobile-shade:#14281d50}
+.hero[data-chapter="2"]{--chapter-banner:url("./assets/bottle-grotto.webp")}
+.hero[data-chapter="3"]{--chapter-banner:url("./assets/key-cavern.webp")}
+.hero[data-chapter="4"]{--chapter-banner:url("./assets/anglers-tunnel.webp")}
+.hero[data-chapter="5"]{--chapter-banner:url("./assets/catfishs-maw.webp")}
+.hero[data-chapter="6"]{--chapter-banner:url("./assets/face-shrine.webp")}
+.hero[data-chapter="7"]{--chapter-banner:url("./assets/eagles-tower.webp");--chapter-focus:center 10%}
+.hero[data-chapter="8"]{--chapter-banner:url("./assets/turtle-rock.webp")}
+.hero[data-chapter="9"]{--chapter-banner:url("./assets/wind-fishs-egg.webp")}
 .hero-content{max-width:515px}
 .hero-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:12px;font-weight:600;color:#e9e6d4}
 .kicker{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
@@ -359,3 +359,7 @@ dialog .close{position:absolute;right:13px;top:12px}
 [data-theme="dark"] .inline-error {
   color: var(--heart-ink) !important;
 }
+
+.toast{position:fixed;z-index:40;right:16px;bottom:16px;max-width:min(360px,calc(100% - 32px));padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--white);color:var(--ink);box-shadow:0 12px 40px #0e231f55}
+.toast p{margin:0 0 10px}
+.hint{color:var(--muted);font-size:13px}

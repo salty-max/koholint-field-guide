@@ -1,4 +1,6 @@
-window.KOHOLINT_CHAPTERS.push(
+import type { RawChapter } from "../types";
+
+export const earlyChapters: RawChapter[] = [
   {
     id: 1,
     title: "Tail Cave",
@@ -193,4 +195,4 @@ window.KOHOLINT_CHAPTERS.push(
       },
     ],
   },
-);
+];

@@ -1,4 +1,6 @@
-window.KOHOLINT_CHAPTERS.push(...[
+import type { RawChapter } from "../types";
+
+export const middleChapters: RawChapter[] = [
   {
     id: 4,
     title: "Angler’s Tunnel",
@@ -206,4 +208,4 @@ window.KOHOLINT_CHAPTERS.push(...[
       }
     ]
   }
-]);
+];

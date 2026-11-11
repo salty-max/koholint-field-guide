@@ -4,7 +4,23 @@ A responsive companion for *The Legend of Zelda: Link’s Awakening* on Nintendo
 
 ## Run it locally
 
-From this project folder, run `python3 -m http.server 8000 --directory dist` and visit [localhost:8000](http://localhost:8000). The project uses plain HTML, CSS and JavaScript. It needs no build step or packages. You can host the contents of `dist` on any static web host.
+The app is a React 19 + TypeScript single-page app built with Vite. You need Node 20+ and pnpm.
+
+```bash
+pnpm install
+pnpm dev        # http://localhost:5173
+pnpm build      # typecheck + production build into dist/
+pnpm preview    # serve the production build
+pnpm test       # Vitest unit and component tests
+pnpm lint
+pnpm icons      # regenerate public/icons from the compass motif
+```
+
+Routes are real paths (`/guide/3`, `/checklist/heart`, `/dashboard/deathless`, `/sources`), so any static host needs a fallback to `index.html`. Old hash links such as `#guide/3` still redirect. The app is an installable PWA (vite-plugin-pwa): it precaches the shell, fonts and banners, works offline, and asks before swapping in a new version. Walkthrough content lives in `src/data`; progress state is in `src/store`.
+
+## Deploy
+
+Hosted on Vercel from `main`. `vercel.json` sets the build (`pnpm build` → `dist`), a catch-all rewrite to `index.html`, a strict CSP (no inline scripts), security headers, and cache rules: `no-cache` for `index.html`, `sw.js`, `theme-init.js` and the manifest, and one-year `immutable` for hashed `/assets`. Check header changes against a real preview deployment, not just locally.
 
 ## Use the guide
 
@@ -22,7 +38,7 @@ The walkthrough was checked against published Switch remake guides. The app was 
 
 All nine chapter banners are original illustrations made with OpenAI’s built-in image generator. The art uses a handcrafted miniature diorama style. It illustrates the chapter setting and serves as decoration. Follow the walkthrough text and sourced maps for in-game directions.
 
-The font licenses for DM Sans and Playfair Display are included in `dist/assets`. *The Legend of Zelda* and *Link’s Awakening* belong to Nintendo. This is an unofficial guide.
+The font licenses for DM Sans and Playfair Display are included in `public/fonts`. *The Legend of Zelda* and *Link’s Awakening* belong to Nintendo. This is an unofficial guide.
 
 ### Chapter art prompts
 

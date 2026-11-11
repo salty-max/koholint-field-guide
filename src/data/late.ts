@@ -1,4 +1,6 @@
-window.KOHOLINT_CHAPTERS.push(
+import type { RawChapter } from "../types";
+
+export const lateChapters: RawChapter[] = [
   {
     id: 7,
     title: 'Eagle’s Tower',
@@ -188,4 +190,4 @@ window.KOHOLINT_CHAPTERS.push(
       }
     ]
   }
-);
+];

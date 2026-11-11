@@ -1,7 +1,15 @@
+import type { SideGroup, SideStep } from "../types";
+
+export const sideGroups: SideGroup[] = [];
+export const extraTags: Record<string, string[]> = {};
+export const sources: [label: string, url: string][] = [];
+
+type Entry = [id: string, name: string, note: string, tags?: string[]];
+
 (() => {
-  const groups = [];
-  function add(chapter, title, location, category, entries, placement = "after") {
-    groups.push({chapter, title, location, placement, steps: entries.map(([id, name, note, tags]) => [id, tags ?? [category], name, note])});
+  const groups = sideGroups;
+  function add(chapter: number, title: string, location: string, category: string, entries: Entry[], placement = "after") {
+    groups.push({chapter, title, location, placement, steps: entries.map(([id, name, note, tags]): SideStep => [id, tags ?? [category], name, note])});
   }
 
   add(1,"Village errands","Mabe Village","heart",[
@@ -214,14 +222,13 @@
     ["stone-figures","Chamber Stone · Figure collection","After winning and placing all ten figures, speak to the Trendy Game owner. Collect the stone and the permanent discount, then hand the stone to Dampé to obtain +Monsters.",["stone","effect","mini"]]
   ],"after");
 
-  window.KOHOLINT_SIDE = groups;
-  window.KOHOLINT_TAGS = {
+  Object.assign(extraTags, {
     "shell-tail-cave":["shell"], "face-rapids-shell":["shell"], "eagle-shell":["shell"],
     "angler-ocarina":["gear"], "angler-ballad":["song"], "maw-manbo":["song","warp"],
     "eagle-mirror-shield":["gear"], "turtle-magic-rod":["gear"]
-  };
+  });
 
-  window.KOHOLINT_SOURCES = [
+  sources.push(...[
     ["Heart Piece locations and maps","https://www.nintendolife.com/guides/zelda-links-awakening-all-heart-pieces-map-and-locations"],
     ["Secret Seashell maps","https://www.nintendolife.com/guides/zelda-links-awakening-all-secret-seashells-map-and-locations"],
     ["Secret Seashell route cross-check","https://www.thonky.com/zelda-links-awakening/nintendo-switch-secret-seashells"],
@@ -235,17 +242,17 @@
     ["Chamber Stones and effects","https://zeldacentral.com/games/links-awakening-remake/collectibles/dampes-shack-and-chamber-dungeon/"],
     ["Nintendo’s Switch remake gameplay guide","https://zelda.nintendo.com/links-awakening/ca/gameplay/"],
     ["Switch deathless and mini-game unlockables","https://gamefaqs.gamespot.com/switch/258622-the-legend-of-zelda-links-awakening/cheats"]
-  ];
+  ] as [string, string][]);
 })();
 
 (() => {
-  const groups = window.KOHOLINT_SIDE;
-  const tags = window.KOHOLINT_TAGS;
-  function add(chapter, title, location, steps, placement = "after") {
+  const groups = sideGroups;
+  const tags = extraTags;
+  function add(chapter: number, title: string, location: string, steps: SideStep[], placement = "after") {
     groups.push({chapter, title, location, steps, placement});
   }
-  function chamber(chapter, title, rows) {
-    add(chapter, title, "Dampé’s Shack", rows.map(([id, name, text, category]) => ["chamber-" + id, ["challenge", ...(category ?? [])], name, text]), "after");
+  function chamber(chapter: number, title: string, rows: [id: string, name: string, text: string, category?: string[]][]) {
+    add(chapter, title, "Dampé’s Shack", rows.map(([id, name, text, category]): SideStep => ["chamber-" + id, ["challenge", ...(category ?? [])], name, text]), "after");
   }
 
   chamber(2,"Dampé’s first arrangements",[
@@ -289,7 +296,7 @@
     ["supreme","The Supreme Shape","Fill the last outline. Start with the entrance, boss and required tiles, then fit your straight, corner and dead-end rooms around that route."]
   ]);
 
-  function warp(chapter, id, name, directions, placement = "before-dungeon") {
+  function warp(chapter: number, id: string, name: string, directions: string, placement = "before-dungeon") {
     add(chapter,"Island warp points","Koholint Island",[["warp-"+id,"warp",name,directions]],placement);
   }
   warp(3,"ukuku","Ukuku Prairie warp","Step onto the visible warp pad immediately east of Mabe Village.");
@@ -309,7 +316,7 @@
   add(7,"Shop Chamber Stone","Mabe Village",[
     ["stone-shop-3","stone","Shop Chamber Stone · 3 of 7","After Face Shrine, check the Town Tool Shop again. Buy the newly available stone for 1,280 rupees."]
   ],"before-dungeon");
-  add(9,"Last shop Chamber Stones","Mabe Village",Array.from({length:4},(_,index) => [
+  add(9,"Last shop Chamber Stones","Mabe Village",Array.from({length:4},(_,index): SideStep => [
     "stone-shop-"+(index+4),"stone","Shop Chamber Stone · "+(index+4)+" of 7","After Turtle Rock, the shop adds four more stones. Pay 1,280 rupees for this one, then leave and return to refresh stock."
   ]),"before-dungeon");
 
