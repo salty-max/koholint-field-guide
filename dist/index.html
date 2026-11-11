@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172d25">
+  <meta name="description" content="A spoiler-conscious, interactive 100% field guide to Link’s Awakening on Nintendo Switch.">
+  <title>Koholint Field Guide · Link’s Awakening</title>
+  <link rel="stylesheet" href="style.css">
+  <script>window.KOHOLINT_CHAPTERS = [];</script>
+  <script defer src="early.js"></script>
+  <script defer src="middle.js"></script>
+  <script defer src="late.js"></script>
+  <script defer src="collectibles.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="topbar">
+    <button class="mobile-menu icon-button" type="button" data-action="toggle-menu" aria-label="Open chapters" aria-controls="chapter-rail" aria-expanded="false" id="menu-toggle"></button>
+    <a class="brand" href="#guide" aria-label="Koholint Field Guide home"><span class="brand-icon" id="brand-icon"></span><span class="brand-type"><strong>Koholint</strong><small>FIELD GUIDE</small></span></a>
+    <nav id="top-nav" class="top-nav" aria-label="Main navigation"></nav>
+    <button class="save-status" data-action="settings" id="save-status" type="button"><span></span>Progress saved</button>
+  </header>
+  <div class="layout">
+    <aside class="rail" id="chapter-rail" aria-label="Chapters"></aside>
+    <button class="scrim" data-action="toggle-menu" aria-label="Close chapters" hidden></button>
+    <main id="main" class="main" tabindex="-1"></main>
+  </div>
+  <dialog id="dialog" aria-labelledby="dialog-title"></dialog>
+  <div id="status" class="sr-only" role="status"></div>
+  <noscript><p class="no-js">Enable JavaScript to open the guide and save checklist progress.</p></noscript>
+</body>
+</html>
