@@ -32,8 +32,10 @@ describe("App", () => {
     await user.click(screen.getByRole("link", { name: "Read walkthrough" }));
     expect(screen.getByRole("heading", { name: "Recover your sword and shield" })).toHaveFocus();
 
-    const shield = within(walkthrough).getByRole("checkbox", { name: "Get the Shield from Tarin" });
-    await user.click(shield);
+    const shield = within(walkthrough).getByRole("checkbox", { name: "Get the Shield from Tarin." });
+    const openingSentence = within(walkthrough).getByText("Get the Shield from Tarin.", { selector: "label" });
+    expect(openingSentence).toContainElement(shield);
+    await user.click(openingSentence);
     expect(shield).toBeChecked();
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).checks).toEqual({ shield: true });
 
@@ -46,7 +48,7 @@ describe("App", () => {
     await user.click(screen.getByRole("link", { name: "Chapter 1" }));
     const paragraph = document.getElementById("entry-shield");
     expect(paragraph).toHaveFocus();
-    expect(screen.getByRole("checkbox", { name: "Get the Shield from Tarin" })).not.toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "Get the Shield from Tarin." })).not.toBeChecked();
   });
 
   it("hides later chapters until revealed", async () => {

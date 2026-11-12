@@ -113,11 +113,11 @@ function GuideView({ chapter, target }: { chapter: Chapter; target?: string }) {
                   key={row.id}
                   tabIndex={-1}
                 >
-                  <strong>{row.title}{/[.!?]$/.test(row.title) ? "" : "."}</strong>{" "}
-                  {row.text}{" "}
                   <label className="walkthrough-check">
-                    <ProgressCheckbox id={`walkthrough-${row.id}`} rowId={row.id} label={row.title} />
-                  </label>
+                    <ProgressCheckbox id={`walkthrough-${row.id}`} rowId={row.id} />
+                    {row.title}{/[.!?]$/.test(row.title) ? "" : "."}
+                  </label>{" "}
+                  {row.text}
                 </p>
               ))}
             </section>

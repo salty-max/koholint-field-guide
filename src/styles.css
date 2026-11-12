@@ -367,10 +367,15 @@ dialog .close{position:absolute;right:13px;top:12px}
   font-size: 16px;
 }
 
+.walkthrough-section {
+  padding: clamp(14px, 2.2vw, 26px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+}
+
 .walkthrough-section + .walkthrough-section {
-  margin-block-start: 2.2rem;
-  padding-block-start: 1.75rem;
-  border-block-start: 1px solid var(--line);
+  margin-block-start: 16px;
 }
 
 .walkthrough-heading {
@@ -397,34 +402,27 @@ dialog .close{position:absolute;right:13px;top:12px}
   margin-block-start: 0.85rem;
 }
 
-.walkthrough-paragraph strong {
-  font-weight: 700;
-}
-
 .walkthrough-paragraph.linked-paragraph {
-  background: var(--white);
+  background: var(--paper);
   box-shadow: -3px 0 var(--gold);
   border-radius: 3px;
 }
 
 .walkthrough-check {
-  display: inline-grid;
-  width: 30px;
-  height: 28px;
-  place-items: center;
-  vertical-align: middle;
+  font-weight: 700;
   cursor: pointer;
-  border-radius: 5px;
 }
 
 .walkthrough-check input[type="checkbox"] {
-  margin: 0;
-  width: 16px;
-  height: 16px;
+  display: inline-grid;
+  width: 17px;
+  height: 17px;
+  margin: 0 0.45em 0 0;
+  vertical-align: -0.12em;
 }
 
 .walkthrough-check:hover {
-  background: var(--white);
+  color: var(--fern);
 }
 
 .chapter-contents-desktop {
