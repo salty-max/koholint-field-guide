@@ -4,7 +4,8 @@ import { Icon } from "./Icon";
 import { IconButton } from "./ui";
 import { DialogHost } from "./DialogHost";
 import { UpdatePrompt } from "./UpdatePrompt";
-import { chapters, guideAnchor, readChapter, two } from "../lib/guide";
+import { UndoToast } from "./UndoToast";
+import { chapterRows, chapters, guideAnchor, pct, readChapter, two } from "../lib/guide";
 import { isOpen, useProgress } from "../store/progress";
 import { useReveal } from "../lib/useReveal";
 import { useTheme } from "../store/theme";
@@ -75,10 +76,13 @@ function Rail({ id, className, activeChapter, view, railRef }: { id: string; cla
               );
             }
             const current = view === "guide" && activeChapter === chapter.id;
+            const rows = chapterRows(chapter);
+            const percent = pct(rows.filter((row) => data.checks[row.id] === true).length, rows.length);
             return (
               <Link key={chapter.id} className="chapter-link" to={`/guide/${chapter.id}`} aria-current={current ? "page" : undefined}>
                 <span className="number">{n}</span>
                 <span>{chapter.title}</span>
+                <small className="rail-pct" aria-label={`${percent} percent complete`}>{percent}%</small>
                 <Icon name="right" />
               </Link>
             );
@@ -208,6 +212,7 @@ export function Layout({ children }: { children: ReactNode }) {
       </div>
       <DialogHost />
       <UpdatePrompt />
+      <UndoToast />
       <div id="status" className="sr-only" role="status">
         {announcement}
       </div>

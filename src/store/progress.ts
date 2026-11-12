@@ -21,6 +21,8 @@ interface ProgressStore {
   data: ProgressState;
   storageError: boolean;
   setCheck: (id: string, checked: boolean) => void;
+  /** Check or uncheck many entries at once; returns the ids that actually changed so the caller can undo. */
+  setChecks: (ids: string[], checked: boolean) => string[];
   setMode: (mode: ProgressState["mode"]) => void;
   adjustDeaths: (delta: 1 | -1) => void;
   toggleClear: () => void;
@@ -57,6 +59,21 @@ export const useProgress = create<ProgressStore>((set, get) => {
         else delete checks[id];
         return { ...s, checks };
       }),
+    setChecks: (ids, checked) => {
+      const before = get().data.checks;
+      const changed = ids.filter((id) => (before[id] === true) !== checked);
+      if (changed.length) {
+        commit((s) => {
+          const checks = { ...s.checks };
+          for (const id of changed) {
+            if (checked) checks[id] = true;
+            else delete checks[id];
+          }
+          return { ...s, checks };
+        });
+      }
+      return changed;
+    },
     setMode: (mode) => commit((s) => ({ ...s, mode })),
     adjustDeaths: (delta) =>
       commit((s) => {

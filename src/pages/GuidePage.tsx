@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { Link, useLocation, useParams } from "react-router";
 import { Icon } from "../components/Icon";
+import { BulkCheck } from "../components/BulkCheck";
+import { NextUp } from "../components/NextUp";
 import { ProgressCheckbox } from "../components/ProgressCheckbox";
 import { SourceLinks } from "../components/SourceLinks";
 import { Breadcrumb, Button, LinkButton } from "../components/ui";
@@ -93,6 +95,8 @@ function GuideView({ chapter, target }: { chapter: Chapter; target?: string }) {
         </div>
       </header>
 
+      <NextUp chapter={chapter.id} />
+
       <div className="walkthrough-layout">
         <details className="chapter-contents chapter-contents-mobile">
           <summary>In this chapter <Icon name="down" className="svg-icon caret" /></summary>
@@ -105,6 +109,7 @@ function GuideView({ chapter, target }: { chapter: Chapter; target?: string }) {
               <header className="walkthrough-heading">
                 <h2 id={group.key} tabIndex={-1}>{group.title}</h2>
                 <p>{group.location}</p>
+                <BulkCheck rows={group.rows} label={group.title} />
               </header>
               {group.rows.map((row) => (
                 <p

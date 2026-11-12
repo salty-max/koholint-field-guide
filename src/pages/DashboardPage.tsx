@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router";
 import { Stat } from "../components/Stats";
 import { Breadcrumb, Button, Chip, PageHeading, ProgressBar } from "../components/ui";
-import { cats, chapterRows, chapters, coreRows, pct, two, type CategoryId } from "../lib/guide";
+import { biggestGaps, cats, chapterRows, chapters, coreRows, pct, two, type CategoryId } from "../lib/guide";
 import { modeNames } from "../lib/progress-state";
 import { exportProgress } from "../lib/backup";
 import { isOpen, useProgress } from "../store/progress";
@@ -84,6 +84,7 @@ export function DashboardPage() {
   const total = coreRows.length;
   const done = coreRows.filter((row) => data.checks[row.id] === true).length;
   const visible = chapters.filter((chapter) => isOpen(data, chapter.id));
+  const gaps = biggestGaps(data.checks);
 
   useEffect(() => {
     if (section === "deathless") document.getElementById("deathless")?.scrollIntoView({ block: "start" });
@@ -118,6 +119,26 @@ export function DashboardPage() {
               );
             })}
             {data.spoilers && data.ceiling < 9 && <p>{9 - data.ceiling} chapters hidden by spoiler protection.</p>}
+          </section>
+          <section className="panel" aria-labelledby="gaps-title">
+            <h2 id="gaps-title">Biggest gaps</h2>
+            <p>The categories with the most left to find.</p>
+            {gaps.length ? (
+              <ul className="gap-list">
+                {gaps.map((gap) => (
+                  <li key={gap.id}>
+                    <Link to={`/checklist/${gap.id}`}>
+                      <strong>{gap.name}</strong>
+                      <span>
+                        {gap.remaining} left <small>of {gap.total}</small>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>Nothing left. That’s a 100%.</p>
+            )}
           </section>
           <section className="panel">
             <h2>Progress backup</h2>

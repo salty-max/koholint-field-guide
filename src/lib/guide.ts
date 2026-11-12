@@ -108,3 +108,43 @@ export const statusOptions: [string, string][] = [
   ["todo", "Unfinished"],
   ["done", "Completed"],
 ];
+
+/** The next unchecked steps in guide order, starting at `fromChapter` and wrapping round. Optional amiibo steps are skipped. */
+export function nextUp(
+  checks: Record<string, true>,
+  isChapterOpen: (chapter: number) => boolean,
+  fromChapter: number,
+  count = 3,
+): Row[] {
+  const order = [...chapters.filter((c) => c.id >= fromChapter), ...chapters.filter((c) => c.id < fromChapter)];
+  const found: Row[] = [];
+  for (const chapter of order) {
+    if (!isChapterOpen(chapter.id)) continue;
+    for (const row of chapterRows(chapter)) {
+      if (checks[row.id] === true || row.tags.includes("amiibo")) continue;
+      found.push(row);
+      if (found.length === count) return found;
+    }
+  }
+  return found;
+}
+
+export interface Gap {
+  id: CategoryId;
+  name: string;
+  remaining: number;
+  total: number;
+}
+
+/** Categories with the most unchecked entries, biggest first. Optional amiibo and route steps are left out. */
+export function biggestGaps(checks: Record<string, true>, limit = 5): Gap[] {
+  return (Object.keys(cats) as CategoryId[])
+    .filter((id) => id !== "story" && id !== "amiibo")
+    .map((id) => {
+      const rows = rowsByTag(id);
+      return { id, name: cats[id][0], total: rows.length, remaining: rows.filter((row) => checks[row.id] !== true).length };
+    })
+    .filter((gap) => gap.remaining > 0)
+    .sort((a, b) => b.remaining - a.remaining || a.name.localeCompare(b.name))
+    .slice(0, limit);
+}

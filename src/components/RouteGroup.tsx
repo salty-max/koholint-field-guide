@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { Icon, type IconName } from "./Icon";
 import { cats, primaryTag, type CategoryId } from "../lib/guide";
 import { useProgress } from "../store/progress";
+import { BulkCheck } from "./BulkCheck";
 import { ProgressCheckbox } from "./ProgressCheckbox";
 import type { Row } from "../types";
 
@@ -33,7 +34,7 @@ function RouteRow({ row, prefix, fallbackFocusId }: RowProps) {
             {cats[entry][1]}
           </span>
         ))}
-        <Link className="origin" to={`/guide/${row.chapter}/${row.id}`}>
+        <Link className="origin" to={`/guide/${row.chapter}/${row.id}`} aria-label={`Open “${row.title}” in chapter ${row.chapter}`}>
           Chapter {row.chapter}
         </Link>
       </div>
@@ -72,6 +73,9 @@ export function RouteGroup({ groupKey, title, location, icon, rows, fallbackFocu
         <Icon name="down" className="svg-icon caret" />
       </summary>
       <div className="route-list">
+        <div className="route-tools">
+          <BulkCheck rows={rows} label={title} />
+        </div>
         {rows.map((row) => (
           <RouteRow key={row.id} row={row} prefix={groupKey} fallbackFocusId={fallbackFocusId} />
         ))}

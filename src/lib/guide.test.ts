@@ -1,4 +1,4 @@
-import { allRows, byId, chapters, coreRows, CHAPTER_COUNT, readChapter } from "./guide";
+import { allRows, biggestGaps, byId, chapters, coreRows, CHAPTER_COUNT, nextUp, readChapter } from "./guide";
 
 describe("guide data", () => {
   it("has nine chapters in order, each with rows", () => {
@@ -24,5 +24,44 @@ describe("guide data", () => {
     expect(readChapter("0", 2)).toBe(2);
     expect(readChapter("10")).toBe(1);
     expect(readChapter("x", 5)).toBe(5);
+  });
+});
+
+describe("nextUp", () => {
+  const open = (n: number) => n <= 2;
+
+  it("starts at the given chapter, in guide order, skipping checked and amiibo steps", () => {
+    const first = chapters[0].groups[0].rows[0].id;
+    const rows = nextUp({ [first]: true }, open, 1, 3);
+    expect(rows).toHaveLength(3);
+    expect(rows.map((r) => r.id)).not.toContain(first);
+    expect(rows.every((r) => r.chapter <= 2 && !r.tags.includes("amiibo"))).toBe(true);
+  });
+
+  it("never reaches into hidden chapters", () => {
+    const everyOpenId = Object.fromEntries(allRows.filter((r) => r.chapter <= 2).map((r) => [r.id, true as const]));
+    expect(nextUp(everyOpenId, open, 1, 3)).toEqual([]);
+  });
+
+  it("wraps round to earlier chapters", () => {
+    const later = Object.fromEntries(allRows.filter((r) => r.chapter === 2).map((r) => [r.id, true as const]));
+    expect(nextUp(later, open, 2, 1)[0].chapter).toBe(1);
+  });
+});
+
+describe("biggestGaps", () => {
+  it("lists the categories with most left, never route steps or amiibo", () => {
+    const gaps = biggestGaps({}, 50);
+    expect(gaps.map((g) => g.id)).not.toContain("story");
+    expect(gaps.map((g) => g.id)).not.toContain("amiibo");
+    expect([...gaps].sort((a, b) => b.remaining - a.remaining).map((g) => g.id)).toEqual(gaps.map((g) => g.id));
+  });
+
+  it("drops a category once it is complete and shrinks counts as you check", () => {
+    const hearts = allRows.filter((r) => r.tags.includes("heart"));
+    const all = Object.fromEntries(hearts.map((r) => [r.id, true as const]));
+    expect(biggestGaps(all, 50).map((g) => g.id)).not.toContain("heart");
+    const one = biggestGaps({ [hearts[0].id]: true }, 50).find((g) => g.id === "heart");
+    expect(one?.remaining).toBe(hearts.length - 1);
   });
 });
