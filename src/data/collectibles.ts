@@ -33,14 +33,14 @@ type Entry = [id: string, name: string, note: string, tags?: string[]];
     ["lure-light","Lightweight Lure","Pay 10 rupees to fish at the pond. The Lightweight Lure is available from your first visit. Hold A to cast, then tap A to reel when the fish faces you. Ease off when it turns and pulls away.",["lure","mini"]],
     ["heart-fish-1","Piece of Heart · First fish","Land your first fish. A small orange Runt close to the surface is an easy target.",["heart","mini"]],
     ["lure-middle","Middleweight Lure","Land your first green Lunker. This lure sinks more quickly and makes the bottle easier to reach.",["lure","mini"]],
-    ["heart-fish-2","Piece of Heart · Large fish","Reel in a fish longer than 20 inches. Look for a large green Lunker in the lower half of the pond.",["heart","mini"]],
+    ["heart-fish-2","Piece of Heart · Large fish","Aim for one of the biggest green Lunkers swimming in the lower half of the pond to earn the second Piece of Heart.",["heart","mini"]],
     ["bottle-fishing","Fairy Bottle · Pond floor","Cast beyond the bottle in the lower-left weeds and let the lure sink. Reel it into the bottle and bring it up slowly. Catch nearby fish first if they keep knocking the bottle loose.",["bottle","mini"]]
   ],"village");
 
   add(1,"Forest and shore detours","Mysterious Forest · Toronbo Shores","shell",[
     ["shell-flowers","Secret Seashell · Blue flower ring","In the central Mysterious Forest, dig in the center of the ring of blue flowers. You can do this as soon as you own the Shovel."],
     ["shell-beach","Secret Seashell · Beach alcove","Follow Toronbo Shores toward its east end. In the enclosed sandy nook by the log, dig in the lower-left corner against the wall."],
-    ["fairy-forest","Great Fairy · Mysterious Forest","Visit the open cave on the east edge of the forest. Use the fountain to recover before the dungeon. Bottle the smaller fairy if you have an empty bottle.",["fairy"]]
+    ["fairy-forest","Great Fairy · Mysterious Forest","From the sign outside the toadstool log cave, take the path south and then east into the clearing. The fountain is at the north end. Use it to recover before the dungeon, and catch a small fairy if you have an empty bottle.",["fairy"]]
   ],"before-dungeon");
 
   add(2,"Jumping detours","Koholint Prairie · Tabahl Wasteland · Forest","heart",[
@@ -57,7 +57,7 @@ type Entry = [id: string, name: string, note: string, tags?: string[]];
   ],"before-dungeon");
 
   add(3,"Power Bracelet detours","Forest · Ukuku Prairie · Tal Tal Mountains","heart",[
-    ["heart-forest-log","Piece of Heart · Toadstool tunnel","Re-enter the forest log cave from the Toadstool clearing. From the bottom exit, push the two highest available blocks left, push the two in line with the first skull upward, then lift both skulls to reach the piece."],
+    ["heart-forest-log","Piece of Heart · Toadstool tunnel","Bring the Power Bracelet back to the hollow log you crossed in Chapter 1. Enter from the south doorway in the toadstool clearing so you start in the room with the Heart Piece. Push the two highest blocks you can reach left, then push the two blocks in line with the first skull up. Lift the skulls to reach the Heart Piece in the northwest corner."],
     ["heart-prairie-blocks","Piece of Heart · Prairie block cave","Enter the cave in northwest Ukuku Prairie. Push the top-left block north and the next block right. Lift the skull. At the two blocks on the right, push the top one right and the lower one down, then lift the final skull."],
     ["heart-mansion","Piece of Heart · 5 shells","Enter the Seashell Mansion south of Kanalet Castle and step onto its meter with at least five Secret Seashells."],
     ["heart-pothole","Piece of Heart · Pothole Field","After giving Richard the leaves, reach the northeast of his field. Cut the bushes before attempting the jump. Return with the Pegasus Boots if you want an easier dash-jump across the gap."],

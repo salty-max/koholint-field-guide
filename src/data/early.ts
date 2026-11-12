@@ -8,6 +8,7 @@ export const earlyChapters: RawChapter[] = [
     intro: "Recover Link’s equipment, undo the forest’s trick and open the first dungeon. Make a village circuit for early hearts and a Fairy Bottle before facing Moldorm.",
     sources: [
       ["Link’s Hideaway · Switch route", "https://www.linkshideaway.com/links-awakening-switch-walkthrough/tail-cave/"],
+      ["VGKAMI · Mysterious Forest screenshots", "https://vgkami.com/walkthrough/links-awakening/the-mysterious-forest/"],
       ["VGKAMI · Tail Cave room screenshots", "https://vgkami.com/walkthrough/links-awakening/level-1-tail-cave/"],
       ["Nintendo Life · Tail Cave", "https://www.nintendolife.com/guides/zelda-links-awakening-tail-cave-dungeon-and-roc-feather-location"],
     ],
@@ -24,8 +25,9 @@ export const earlyChapters: RawChapter[] = [
         title: "Find the Tail Key",
         location: "Mysterious Forest · Witch’s Hut",
         steps: [
-          ["tail-toadstool", "story", "Cross the log cave for the Sleepy Toadstool", "Go north from the west side of Mabe Village and head east in the forest to the hollow log beside a sign. Keep moving on cracked floor and cut crystals out of your path. The first room also has a 50-rupee chest you can reach by shifting the rock in front of it. In the room of rocks, push the rock immediately left of the entrance left, then push the next rock below you down. Exit south and collect the toadstool by the pond."],
-          ["magic-powder", "gear", "Have the Witch make Magic Powder", "Return through the log cave and leave the forest to the northeast. Follow the prairie path southeast to the Witch’s Hut. Hand over the toadstool and put the Magic Powder on X or Y. Give electrified enemies space along the way."],
+          ["tail-log-rupees", "chest", "Open the 50-rupee chest in the log cave", "Enter the forest from northwest Mabe Village. Just south of the raccoon’s clearing, take the narrow path east to the hollow log beside a sign. Inside, keep moving over the cracked floor and slash the purple crystals. Stand to the right of the rock in front of the chest and push it left to reach the chest."],
+          ["tail-toadstool", "story", "Cross the log cave for the Sleepy Toadstool", "From the chest room, go north through the corridor, then west into the room of rocks. The Piece of Heart in the northwest corner is blocked by skulls. Come back with the Power Bracelet and check it off in Chapter 3 under Power Bracelet detours. For now, push the rock immediately to your left leftward, then push the rock below you down. Take the south exit and pick the toadstool to the left."],
+          ["magic-powder", "gear", "Have the Witch make Magic Powder", "Return through the log cave and leave the forest to the northeast. You’ll pass a Piece of Heart surrounded by pits. The guide brings you back for it with Roc’s Feather in Chapter 2. Follow the prairie path southeast to the Witch’s Hut, give electrified enemies space, and hand over the toadstool. Equip the Magic Powder on X or Y."],
           ["tail-key", "story", "Break the raccoon’s spell and take the Tail Key", "Back in the forest, approach the raccoon from the south and sprinkle it with Magic Powder. Once the path stops sending you astray, go north from the clearing and open the chest."],
           ["tail-enter", "story", "Unlock Tail Cave", "Leave Mabe Village by its south path, take the east trail at the sign and turn south at the end. Use the Tail Key on the lock outside the entrance. This is a good point to finish the nearby village checklist and fill a Fairy Bottle if you have one."],
         ],
@@ -40,7 +42,7 @@ export const earlyChapters: RawChapter[] = [
           ["tail-map", "chest", "Dungeon Map", "Go east from the switch room. Defeat the Keese and both Stalfos. The skeletons retreat when you swing, so corner them. Open the chest and step through the one-way doorway in the north wall."],
           ["tail-beak", "chest", "Stone Beak", "On the lower side of the central hub, unlock the eastern door with a Small Key. Go north from the next room. Time a slash on each Three-of-a-Kind when it shows your chosen suit. All three must display the same suit to reveal the chest. If the three suits don’t match, the enemies start moving again so you can retry."],
           ["tail-key-spark", "chest", "Small Key · orbiting Spark", "Go south and west from the card room, back into the hub. Head west along the lower path to the chest with a Spark circling it. Wait until the Spark moves away, then open it."],
-          ["tail-rupees-20", "chest", "20 Rupees · Mini-Moldorms", "Defeat both small yellow worms in the large hub to reveal the chest on the west side. There is a cracked west wall nearby. You can mark that spot on your map and return with Bombs."],
+          ["tail-rupees-20", "chest", "20 Rupees · Mini-Moldorms", "Defeat both small yellow worms in the large hub to reveal the chest on the west side. The cracked west wall nearby hides a Secret Seashell chest. Chapter 3 brings you back with Bombs."],
         ],
       },
       {
@@ -122,6 +124,7 @@ export const earlyChapters: RawChapter[] = [
       ["Link’s Hideaway · Switch route", "https://www.linkshideaway.com/links-awakening-switch-walkthrough/key-cavern/"],
       ["GameFAQs · Key Cavern room-by-room", "https://gamefaqs.gamespot.com/switch/258622-the-legend-of-zelda-links-awakening/faqs/77938/level-3-key-cavern"],
       ["Nintendo Life · Kanalet Castle and the Slime Key", "https://www.nintendolife.com/guides/zelda-links-awakening-slime-key-location-five-golden-leaves-and-kanalet-castle-bridge"],
+      ["Zelda Universe · Toadstool Tunnel Heart Piece", "https://zeldauniverse.net/guides/links-awakening/sidequests/pieces-of-heart/#The_Toadstool_Tunnel"],
     ],
     sections: [
       {
