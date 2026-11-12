@@ -6,7 +6,7 @@ import { useUi } from "../store/ui";
 export function useReveal() {
   const navigate = useNavigate();
   const openDialog = useUi((s) => s.openDialog);
-  return (chapter: number) =>
+  return (chapter: number, target?: string) =>
     openDialog({
       kind: "confirm",
       title: `Reveal through Chapter ${chapter}?`,
@@ -14,7 +14,7 @@ export function useReveal() {
       label: "Reveal and open",
       onConfirm: () => {
         useProgress.getState().reveal(chapter);
-        navigate(`/guide/${chapter}`);
+        navigate(target ? `/guide/${chapter}/${target}` : `/guide/${chapter}`);
       },
     });
 }

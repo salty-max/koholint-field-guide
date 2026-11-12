@@ -24,8 +24,8 @@ Hosted on Vercel from `main`. `vercel.json` sets the build (`pnpm build` → `di
 
 ## Use the guide
 
-- **Guide** opens at Tail Cave and remembers the last chapter you viewed. Reveal chapters as you reach them. Use **Resume route** to find the first unchecked step.
-- **Checklist** searches and filters the revealed route by location, chapter, category and completion. A check carries across views and categories.
+- **Guide** opens at Tail Cave and remembers the last chapter you viewed. Reveal chapters as you reach them. Read each chapter straight through or jump to a section from **In this chapter**. Check off a step at the end of its paragraph.
+- **Checklist** searches and filters the revealed route by location, chapter, category and completion. Checks sync with the guide and across categories. Open an item’s chapter link to read the directions in context.
 - **Progress** shows completion by chapter and category, with separate manual Normal and Hero deathless logs. Check the death count on your Switch save selection screen.
 - Use the sun or moon in the header to switch themes. Choose **Use device setting** under **Appearance** to follow your system. The theme is saved in this browser.
 - Open **Progress saved** to change spoiler settings or back up your progress as JSON. Your progress belongs to this browser and site address. Export before switching devices or clearing browser data.

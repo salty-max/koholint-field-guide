@@ -84,6 +84,11 @@ export const chapters: Chapter[] = rawChapters.map(({ sections, ...chapter }) =>
 
 export const allRows: Row[] = chapters.flatMap((chapter) => chapter.groups.flatMap((group) => group.rows));
 export const byId = new Map(allRows.map((row) => [row.id, row]));
+export function guideAnchor(chapterId: number, target: string | undefined): string | undefined {
+  if (!target) return;
+  if (byId.get(target)?.chapter === chapterId) return `entry-${target}`;
+  return chapters[chapterId - 1]?.groups.find((group) => group.key === target)?.key;
+}
 /** Rows that count toward overall completion (amiibo are optional). */
 export const coreRows = allRows.filter((row) => !row.tags.includes("amiibo"));
 export const rowsByTag = (tag: string) => allRows.filter((row) => row.tags.includes(tag));

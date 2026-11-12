@@ -1,32 +1,23 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useEffect } from "react";
+import { Link, useLocation, useParams } from "react-router";
 import { Icon } from "../components/Icon";
-import { RouteGroup } from "../components/RouteGroup";
-import { DeathStat, Stat } from "../components/Stats";
-import { Breadcrumb, Button, Chip, Empty, LinkButton, SelectField } from "../components/ui";
+import { ProgressCheckbox } from "../components/ProgressCheckbox";
 import { SourceLinks } from "../components/SourceLinks";
-import { byId, chapterRows, chapters, readChapter, statusOptions, two } from "../lib/guide";
+import { Breadcrumb, Button, LinkButton } from "../components/ui";
+import { chapters, CHAPTER_COUNT, guideAnchor, readChapter, two } from "../lib/guide";
 import { useReveal } from "../lib/useReveal";
 import { isOpen, useProgress } from "../store/progress";
-import { useUi } from "../store/ui";
 import type { Chapter } from "../types";
-
-const routeLabels: [string, string][] = [
-  ["all", "All steps"],
-  ["story", "Route steps"],
-  ["heart", "Hearts"],
-  ["shell", "Seashells"],
-  ["chest", "Chests"],
-  ["trade", "Trades"],
-];
 
 export function GuidePage() {
   const { chapter: param, entry } = useParams();
-  const data = useProgress((s) => s.data);
+  const savedChapter = useProgress((s) => s.data.chapter);
+  const ceiling = useProgress((s) => s.data.ceiling);
   const visitChapter = useProgress((s) => s.visitChapter);
   const reveal = useReveal();
-  const chapterId = readChapter(param, data.chapter);
-  const open = isOpen(data, chapterId);
+  const chapterId = readChapter(param, savedChapter);
+  const open = useProgress((s) => isOpen(s.data, chapterId));
+  const target = guideAnchor(chapterId, entry);
 
   useEffect(() => {
     if (open) visitChapter(chapterId);
@@ -40,188 +31,128 @@ export function GuidePage() {
           <h1>Chapter {chapterId} is hidden</h1>
           <p>Reveal through this chapter when you’re ready.</p>
         </div>
-        <Button look="" icon="unlock" onClick={() => reveal(chapterId)}>
+        <Button look="" icon="unlock" onClick={() => reveal(chapterId, target ? entry : undefined)}>
           Reveal chapter
         </Button>{" "}
-        <LinkButton to={`/guide/${data.ceiling}`}>Back to your guide</LinkButton>
+        <LinkButton to={`/guide/${ceiling}`}>Back to your guide</LinkButton>
       </>
     );
   }
-  const highlight = entry && byId.get(entry)?.chapter === chapterId ? entry : "";
-  // Re-mount per chapter/entry so filters reset exactly when you move somewhere new.
-  return <GuideView key={`${chapterId}:${highlight}`} chapter={chapters[chapterId - 1]} initialHighlight={highlight} />;
+
+  return <GuideView chapter={chapters[chapterId - 1]} target={target} />;
 }
 
-function GuideView({ chapter, initialHighlight }: { chapter: Chapter; initialHighlight: string }) {
-  const checks = useProgress((s) => s.data.checks);
-  const data = useProgress((s) => s.data);
-  const openGroups = useUi((s) => s.openGroups);
-  const setGroupOpen = useUi((s) => s.setGroupOpen);
-  const setGroupsOpen = useUi((s) => s.setGroupsOpen);
+function GuideView({ chapter, target }: { chapter: Chapter; target?: string }) {
+  const { key: locationKey } = useLocation();
+  const nextOpen = useProgress((s) => isOpen(s.data, chapter.id + 1));
   const reveal = useReveal();
-  const [filter, setFilter] = useState("all");
-  const [status, setStatus] = useState("all");
-  const [highlighted, setHighlighted] = useState(initialHighlight);
-  const [resumeTick, setResumeTick] = useState(0);
 
-  const rows = chapterRows(chapter);
-  const done = rows.filter((row) => checks[row.id] === true).length;
-  const groups = chapter.groups
-    .map((group) => ({
-      ...group,
-      shown: group.rows.filter(
-        (row) => (filter === "all" || row.tags.includes(filter)) && (status === "all" || (status === "done") === (checks[row.id] === true)),
-      ),
-    }))
-    .filter((group) => group.shown.length);
-  const labels = routeLabels.filter(([key]) => key === "all" || rows.some((row) => row.tags.includes(key)));
-  const filtered = filter !== "all" || status !== "all";
-  const groupOpen = (key: string, index: number, shownIds: string[]) =>
-    filtered || (openGroups[key] ?? index === 0) || shownIds.includes(highlighted);
-  const allOpen = groups.every((group, index) => groupOpen(group.key, index, group.shown.map((row) => row.id)));
-
-  // Arrive scrolled to a linked entry.
   useEffect(() => {
-    if (initialHighlight) document.getElementById(`entry-${initialHighlight}`)?.scrollIntoView({ block: "start" });
-  }, [initialHighlight]);
+    if (!target) return;
+    const element = document.getElementById(target);
+    element?.focus({ preventScroll: true });
+    element?.scrollIntoView({ block: "start" });
+  }, [target, locationKey]);
 
-  // "Resume route": scroll to and focus the first unchecked step.
-  useEffect(() => {
-    if (!resumeTick) return;
-    const element = document.getElementById(highlighted ? `entry-${highlighted}` : "route");
-    element?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
-    (element?.querySelector("input") ?? element?.querySelector("button"))?.focus({ preventScroll: true });
-    // Only re-run for a new resume request.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resumeTick]);
+  const chapterPath = `/guide/${chapter.id}`;
+  const currentSection = chapter.groups.find((group) =>
+    group.key === target || group.rows.some((row) => `entry-${row.id}` === target),
+  )?.key;
 
-  const resume = () => {
-    const group = chapter.groups.find((item) => item.rows.some((row) => checks[row.id] !== true));
-    setFilter("all");
-    setStatus("all");
-    setHighlighted(group?.rows.find((row) => checks[row.id] !== true)?.id ?? "");
-    if (group) setGroupOpen(group.key, true);
-    setResumeTick((tick) => tick + 1);
-  };
-
-  const next =
-    chapter.id < 9 ? (
-      isOpen(data, chapter.id + 1) ? (
-        <LinkButton to={`/guide/${chapter.id + 1}`} look="" icon="arrow">
-          Next chapter
-        </LinkButton>
-      ) : (
-        <Button look="" icon="unlock" onClick={() => reveal(chapter.id + 1)}>
-          Reveal next chapter
-        </Button>
-      )
-    ) : (
-      <LinkButton to="/dashboard" look="" icon="chart">
-        View progress
-      </LinkButton>
-    );
+  const sectionLinks = (
+    <ul className="chapter-contents-list">
+      {chapter.groups.map((group) => (
+        <li key={group.key}>
+          <Link to={`${chapterPath}/${group.key}`} aria-current={currentSection === group.key ? "location" : undefined}>
+            {group.title}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <>
       <Breadcrumb current={chapter.title} />
-      <section className="hero" data-chapter={chapter.id}>
+      <header className="hero" data-chapter={chapter.id}>
         <div className="hero-content">
           <div className="hero-meta">
-            <span className="kicker">Chapter {two(chapter.id)} / 09</span>
+            <span className="kicker">Chapter {two(chapter.id)} / {two(CHAPTER_COUNT)}</span>
             <span>{chapter.region}</span>
           </div>
           <h1>{chapter.title}</h1>
           <p>{chapter.intro}</p>
           <div className="hero-actions">
-            <Button look="gold" icon="play" onClick={resume}>
-              {done ? "Resume route" : "Start walkthrough"}
-            </Button>
+            <LinkButton to={`${chapterPath}/${chapter.groups[0].key}`} look="gold" icon="down">
+              Read walkthrough
+            </LinkButton>
             <LinkButton to={`/checklist/all/${chapter.id}`} look="ghost" icon="checkList">
-              Open checklist
+              Chapter checklist
             </LinkButton>
           </div>
         </div>
-      </section>
-      <section className="stats" aria-label="Progress summary">
-        <Stat tag="overall" />
-        <Stat tag="heart" />
-        <Stat tag="shell" />
-        <DeathStat />
-      </section>
-      <section id="route" aria-labelledby="route-title">
-        <div className="subhead">
-          <div>
-            <h2 id="route-title">Chapter route</h2>
-            <p>
-              {done} of {rows.length} steps complete
-            </p>
-          </div>
-          <button
-            className="text-link"
-            type="button"
-            onClick={() => setGroupsOpen(groups.map((group) => group.key), !allOpen)}
-          >
-            <Icon name="down" />
-            <span>{allOpen ? "Collapse all" : "Expand all"}</span>
-          </button>
-        </div>
-        <div className="toolbar">
-          <div className="chips" aria-label="Route categories">
-            {labels.map(([id, label]) => (
-              <Chip
-                key={id}
-                label={label}
-                value={id}
-                current={filter}
-                onSelect={(value) => {
-                  setFilter(value);
-                  setHighlighted("");
-                }}
-              />
-            ))}
-          </div>
-          <SelectField
-            id="route-status"
-            label="Route completion status"
-            choices={statusOptions}
-            value={status}
-            bare
-            onChange={(value) => {
-              setStatus(value);
-              setHighlighted("");
-            }}
-          />
-        </div>
-        {groups.length ? (
-          groups.map((group, index) => (
-            <RouteGroup
-              key={group.key}
-              groupKey={group.key}
-              title={group.title}
-              location={group.location}
-              icon={group.icon}
-              rows={group.shown}
-              open={groupOpen(group.key, index, group.shown.map((row) => row.id))}
-              highlightedId={highlighted}
-              fallbackFocusId="route-status"
-              rememberToggle={!filtered}
-            />
-          ))
-        ) : (
-          <Empty>No steps match these filters.</Empty>
-        )}
-        <div className="end-nav">
-          <span>
-            {chapter.id > 1 && (
-              <LinkButton to={`/guide/${chapter.id - 1}`} icon="left">
-                Previous chapter
+      </header>
+
+      <div className="walkthrough-layout">
+        <details className="chapter-contents chapter-contents-mobile">
+          <summary>In this chapter <Icon name="down" className="svg-icon caret" /></summary>
+          <nav aria-label="In this chapter">{sectionLinks}</nav>
+        </details>
+
+        <article className="walkthrough-article" aria-label={`${chapter.title} walkthrough`}>
+          {chapter.groups.map((group) => (
+            <section className="walkthrough-section" key={group.key} aria-labelledby={group.key}>
+              <header className="walkthrough-heading">
+                <h2 id={group.key} tabIndex={-1}>{group.title}</h2>
+                <p>{group.location}</p>
+              </header>
+              {group.rows.map((row) => (
+                <p
+                  className={`walkthrough-paragraph${target === `entry-${row.id}` ? " linked-paragraph" : ""}`}
+                  id={`entry-${row.id}`}
+                  key={row.id}
+                  tabIndex={-1}
+                >
+                  <strong>{row.title}{/[.!?]$/.test(row.title) ? "" : "."}</strong>{" "}
+                  {row.text}{" "}
+                  <label className="walkthrough-check">
+                    <ProgressCheckbox id={`walkthrough-${row.id}`} rowId={row.id} label={row.title} />
+                  </label>
+                </p>
+              ))}
+            </section>
+          ))}
+
+          <nav className="end-nav walkthrough-end" aria-label="Chapter navigation">
+            <span>
+              {chapter.id > 1 && (
+                <LinkButton to={`/guide/${chapter.id - 1}`} icon="left">
+                  Previous chapter
+                </LinkButton>
+              )}
+            </span>
+            {chapter.id === CHAPTER_COUNT ? (
+              <LinkButton to="/dashboard" look="" icon="chart">
+                View progress
               </LinkButton>
+            ) : nextOpen ? (
+              <LinkButton to={`/guide/${chapter.id + 1}`} look="" icon="arrow">
+                Next chapter
+              </LinkButton>
+            ) : (
+              <Button look="" icon="unlock" onClick={() => reveal(chapter.id + 1)}>
+                Reveal next chapter
+              </Button>
             )}
-          </span>
-          {next}
-        </div>
-      </section>
-      <SourceLinks items={[...chapter.sources, ["Heart Pieces, shells and side-quest sources", "/sources"]]} />
+          </nav>
+          <SourceLinks items={[...chapter.sources, ["Heart Pieces, shells and side-quest sources", "/sources"]]} />
+        </article>
+
+        <nav className="chapter-contents chapter-contents-desktop" aria-label="In this chapter">
+          <h2>In this chapter</h2>
+          {sectionLinks}
+        </nav>
+      </div>
     </>
   );
 }

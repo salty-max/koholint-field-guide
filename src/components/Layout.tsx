@@ -4,7 +4,7 @@ import { Icon } from "./Icon";
 import { IconButton } from "./ui";
 import { DialogHost } from "./DialogHost";
 import { UpdatePrompt } from "./UpdatePrompt";
-import { byId, chapters, readChapter, two } from "../lib/guide";
+import { chapters, guideAnchor, readChapter, two } from "../lib/guide";
 import { isOpen, useProgress } from "../store/progress";
 import { useReveal } from "../lib/useReveal";
 import { useTheme } from "../store/theme";
@@ -12,8 +12,8 @@ import { useUi } from "../store/ui";
 import { useResolvedTheme } from "../lib/useThemeEffects";
 
 function viewOf(pathname: string) {
-  const [view = "guide", param] = pathname.split("/").filter(Boolean);
-  return { view, param };
+  const [view = "guide", param, entry] = pathname.split("/").filter(Boolean);
+  return { view, param, entry };
 }
 
 function ThemeToggle() {
@@ -75,12 +75,11 @@ function Rail({ id, className, activeChapter, view, railRef }: { id: string; cla
               );
             }
             const current = view === "guide" && activeChapter === chapter.id;
-            const complete = chapter.groups.every((group) => group.rows.every((row) => data.checks[row.id] === true));
             return (
               <Link key={chapter.id} className="chapter-link" to={`/guide/${chapter.id}`} aria-current={current ? "page" : undefined}>
                 <span className="number">{n}</span>
                 <span>{chapter.title}</span>
-                <Icon name={complete ? "check" : "right"} />
+                <Icon name="right" />
               </Link>
             );
           })}
@@ -116,22 +115,23 @@ export function Layout({ children }: { children: ReactNode }) {
   const menuToggle = useRef<HTMLButtonElement>(null);
   const railRef = useRef<HTMLElement>(null);
   const firstRender = useRef(true);
-  const { view, param } = viewOf(pathname);
+  const { view, param, entry } = viewOf(pathname);
   const activeChapter = readChapter(param, chapter);
+  const guideTarget = view === "guide" && guideAnchor(activeChapter, entry);
+  const targetedGuide = useProgress((s) => Boolean(guideTarget && isOpen(s.data, activeChapter)));
+  const targeted = targetedGuide || (view === "dashboard" && param === "deathless");
 
   // Moving to a new page: close the menu, reset scroll and focus <main>, unless the URL
-  // points at something to scroll to (a guide entry or the deathless panel).
+  // points at something to scroll to (a walkthrough section, an entry or the deathless panel).
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
       return;
     }
-    const [, , entry] = pathname.split("/").filter(Boolean);
-    const targeted = (view === "guide" && entry && byId.get(entry)?.chapter === activeChapter) || (view === "dashboard" && param === "deathless");
     if (targeted) return;
     window.scrollTo(0, 0);
     mainRef.current?.focus({ preventScroll: true });
-  }, [pathname, view, param, activeChapter]);
+  }, [pathname, targeted]);
 
   useEffect(() => {
     if (!menuOpen) return;

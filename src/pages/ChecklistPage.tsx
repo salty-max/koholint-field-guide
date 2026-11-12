@@ -63,7 +63,7 @@ function ChecklistView() {
     <>
       <Breadcrumb current="Checklist" />
       <PageHeading title="Completion checklist">
-        <p>Search by item, location or activity. Checks are shared with the walkthrough.</p>
+        <p>Search by item, location or activity. Checks sync with the walkthrough. Open a chapter link to read an entry in context.</p>
       </PageHeading>
       {data.spoilers && data.ceiling < 9 && (
         <div className="callout">
@@ -119,11 +119,7 @@ function ChecklistView() {
                 location={`Chapter ${two(chapter.id)}`}
                 icon="book"
                 rows={here}
-                open
-                highlightedId=""
-                origin
                 fallbackFocusId="collection-status"
-                rememberToggle={false}
               />
             ) : null;
           })
