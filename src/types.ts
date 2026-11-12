@@ -28,6 +28,8 @@ export interface Row {
   location: string;
   group: string;
   tags: string[];
+  /** Can be lost for good if you move on (see src/data/missables.ts). */
+  missable?: true;
 }
 
 export interface Group {

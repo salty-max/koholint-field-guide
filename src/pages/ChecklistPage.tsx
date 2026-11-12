@@ -2,11 +2,12 @@ import { useMemo, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import { Icon } from "../components/Icon";
 import { RouteGroup } from "../components/RouteGroup";
+import { missables } from "../data/missables";
 import { Breadcrumb, Button, Chip, Empty, PageHeading, SelectField } from "../components/ui";
-import { allRows, cats, chapters, isCategory, readChapter, statusOptions, two } from "../lib/guide";
+import { allRows, cats, tagName, chapters, isCategory, readChapter, statusOptions, two } from "../lib/guide";
 import { isOpen, useProgress } from "../store/progress";
 
-const topFilters: [string, string][] = [
+const baseFilters: [string, string][] = [
   ["all", "All entries"],
   ["heart", "Heart Pieces"],
   ["shell", "Seashells"],
@@ -15,6 +16,10 @@ const topFilters: [string, string][] = [
   ["mini", "Mini-games"],
   ["challenge", "Chambers"],
 ];
+
+// The Missable filter only exists once something is actually flagged.
+const hasMissables = missables.length > 0;
+const topFilters: [string, string][] = hasMissables ? [...baseFilters, ["missable", "Missable"]] : baseFilters;
 
 export function ChecklistPage() {
   const { pathname } = useLocation();
@@ -25,7 +30,7 @@ export function ChecklistPage() {
 function ChecklistView() {
   const { category, chapter: chapterParam } = useParams();
   const data = useProgress((s) => s.data);
-  const [filter, setFilter] = useState<string>(isCategory(category) ? category : "all");
+  const [filter, setFilter] = useState<string>(isCategory(category) || (hasMissables && category === "missable") ? category! : "all");
   const [chapterFilter, setChapterFilter] = useState(() =>
     chapterParam && isOpen(data, readChapter(chapterParam)) ? String(readChapter(chapterParam)) : "all",
   );
@@ -45,7 +50,7 @@ function ChecklistView() {
       (effectiveChapter === "all" || row.chapter === Number(effectiveChapter)) &&
       (status === "all" || (status === "done") === (data.checks[row.id] === true)) &&
       (!needle ||
-        [row.title, row.text, row.location, row.group, ...row.tags.map((tag) => cats[tag as keyof typeof cats][0])]
+        [row.title, row.text, row.location, row.group, ...row.tags.map(tagName)]
           .join(" ")
           .toLocaleLowerCase()
           .includes(needle)),
@@ -85,7 +90,7 @@ function ChecklistView() {
         <SelectField
           id="collection-category"
           label="Category"
-          choices={[["all", "All categories"], ...Object.entries(cats).map(([id, [name]]): [string, string] => [id, name])]}
+          choices={[["all", "All categories"], ...Object.entries(cats).map(([id, [name]]): [string, string] => [id, name]), ...(hasMissables ? [["missable", "Missable"] as [string, string]] : [])]}
           value={filter}
           onChange={setFilter}
         />

@@ -4,6 +4,7 @@ import { lateChapters } from "../data/late";
 import { extraTags, sideGroups } from "../data/collectibles";
 import type { Chapter, RawSection, Row, SideGroup } from "../types";
 import type { IconName } from "../components/Icon";
+import { missables } from "../data/missables";
 
 export const CHAPTER_COUNT = 9;
 
@@ -63,6 +64,8 @@ function orderedSections(chapterId: number, story: Section[]): Section[] {
   return [...story.slice(0, index), ...pick("before-dungeon"), ...story.slice(index), ...pick("after")];
 }
 
+const missableIds = new Set(missables.map((item) => item.id));
+
 export const chapters: Chapter[] = rawChapters.map(({ sections, ...chapter }) => ({
   ...chapter,
   groups: orderedSections(chapter.id, sections).map((group, index) => ({
@@ -77,7 +80,8 @@ export const chapters: Chapter[] = rawChapters.map(({ sections, ...chapter }) =>
       chapter: chapter.id,
       location: group.location,
       group: group.title,
-      tags: [...new Set([...[raw].flat(), ...(extraTags[id] ?? [])])],
+      tags: [...new Set([...[raw].flat(), ...(extraTags[id] ?? []), ...(missableIds.has(id) ? ["missable"] : [])])],
+      missable: missableIds.has(id) ? true : undefined,
     })),
   })),
 }));
@@ -148,3 +152,11 @@ export function biggestGaps(checks: Record<string, true>, limit = 5): Gap[] {
     .sort((a, b) => b.remaining - a.remaining || a.name.localeCompare(b.name))
     .slice(0, limit);
 }
+
+/** Display name for a row tag: a category, or the cross-cutting "missable". */
+export const tagName = (tag: string) =>
+  isCategory(tag) ? cats[tag][0] : tag === "missable" ? "Missable" : tag;
+
+/** Missable rows of a chapter that are still unchecked. */
+export const missablesLeft = (chapter: Chapter, checks: Record<string, true>) =>
+  chapterRows(chapter).filter((row) => row.missable && checks[row.id] !== true);

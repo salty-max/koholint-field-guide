@@ -34,6 +34,10 @@ The completion total covers the walkthrough and its checklists. Optional amiibo 
 
 The walkthrough was checked against published Switch remake guides. The app was tested in a browser. Game directions were verified from references without a new console playthrough.
 
+## Missable entries
+
+A "Don't miss" strip appears on a chapter when `src/data/missables.ts` flags an unchecked entry there. An entry is flagged only when two independent sources agree on the exact condition. Today nothing qualifies for the Switch remake, since you can reload the clear save after the ending, so the strip says that and links the sources. Open questions are in `docs/facts-to-verify.md`.
+
 ## Artwork and fonts
 
 All nine chapter banners are original illustrations made with OpenAI’s built-in image generator. The art uses a handcrafted miniature diorama style. It illustrates the chapter setting and serves as decoration. Follow the walkthrough text and sourced maps for in-game directions.

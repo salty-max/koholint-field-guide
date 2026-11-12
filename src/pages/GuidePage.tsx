@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link, useLocation, useParams } from "react-router";
 import { Icon } from "../components/Icon";
 import { BulkCheck } from "../components/BulkCheck";
+import { MissablesStrip } from "../components/MissablesStrip";
 import { NextUp } from "../components/NextUp";
 import { ProgressCheckbox } from "../components/ProgressCheckbox";
 import { SourceLinks } from "../components/SourceLinks";
@@ -96,6 +97,7 @@ function GuideView({ chapter, target }: { chapter: Chapter; target?: string }) {
       </header>
 
       <NextUp chapter={chapter.id} />
+      <MissablesStrip chapter={chapter} />
 
       <div className="walkthrough-layout">
         <details className="chapter-contents chapter-contents-mobile">
