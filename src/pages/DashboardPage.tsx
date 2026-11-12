@@ -103,7 +103,7 @@ export function DashboardPage() {
         <div>
           <section className="panel">
             <h2>Chapter progress</h2>
-            <p>Open a revealed chapter to resume its route.</p>
+            <p>Open a revealed chapter.</p>
             {visible.map((chapter) => {
               const rows = chapterRows(chapter);
               const count = rows.filter((row) => data.checks[row.id] === true).length;

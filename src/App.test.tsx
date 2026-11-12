@@ -70,16 +70,13 @@ describe("App", () => {
     const idsBefore = list().getAllByRole("checkbox").map((box) => box.id);
     await user.click(list().getAllByRole("checkbox")[0]);
 
-    // Same boxes, same order: nothing jumps. The first is now checked.
     expect(list().getAllByRole("checkbox").map((box) => box.id)).toEqual(idsBefore);
     expect(list().getAllByRole("checkbox")[0]).toBeChecked();
 
-    // Undo restores it exactly.
     await user.click(within(screen.getByRole("group", { name: "Last change" })).getByRole("button", { name: "Undo" }));
     expect(list().getAllByRole("checkbox")[0]).not.toBeChecked();
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).checks).toEqual({});
 
-    // Tick again, then advance: the list moves on and drops the done step.
     await user.click(list().getAllByRole("checkbox")[0]);
     await user.click(list().getByRole("button", { name: "Show next steps" }));
     expect(list().getAllByRole("checkbox").map((box) => box.id)).not.toContain(idsBefore[0]);

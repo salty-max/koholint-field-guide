@@ -4,7 +4,6 @@ import { Button } from "./ui";
 
 const LIFETIME_MS = 6000;
 
-/** Short-lived "Checked … · Undo" bar. A new action replaces the old one. */
 export function UndoToast() {
   const toast = useUi((s) => s.toast);
   const dismissToast = useUi((s) => s.dismissToast);

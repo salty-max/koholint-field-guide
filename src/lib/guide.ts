@@ -153,10 +153,8 @@ export function biggestGaps(checks: Record<string, true>, limit = 5): Gap[] {
     .slice(0, limit);
 }
 
-/** Display name for a row tag: a category, or the cross-cutting "missable". */
 export const tagName = (tag: string) =>
   isCategory(tag) ? cats[tag][0] : tag === "missable" ? "Missable" : tag;
 
-/** Missable rows of a chapter that are still unchecked. */
 export const missablesLeft = (chapter: Chapter, checks: Record<string, true>) =>
   chapterRows(chapter).filter((row) => row.missable && checks[row.id] !== true);

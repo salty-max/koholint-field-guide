@@ -4,7 +4,6 @@ import type { Row } from "../types";
 
 const CONFIRM_ABOVE = 5;
 
-/** "Check all / Uncheck all" for a group of steps, with an undo toast. */
 export function BulkCheck({ rows, label }: { rows: Row[]; label: string }) {
   const checks = useProgress((s) => s.data.checks);
   const setChecks = useProgress((s) => s.setChecks);
