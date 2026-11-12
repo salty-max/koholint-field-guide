@@ -536,7 +536,12 @@ dialog .close{position:absolute;right:13px;top:12px}
 :is(.route-row,.walkthrough-check) input[type=checkbox]{width:24px;height:24px;border-radius:6px}
 :is(.route-row,.walkthrough-check) input:checked::before{width:11px;height:6px}
 .walkthrough-check{display:inline;padding-block:6px}
-.walkthrough-check input[type="checkbox"]{width:24px;height:24px;margin-inline-end:.5em;vertical-align:-6px}
+/* Inline checkbox: a plain inline-block with an absolutely placed checkmark, so ticking it can never
+   change its baseline (an inline-grid with a ::before child shifted by ~9px when checked). */
+.walkthrough-check input[type="checkbox"]{display:inline-block;position:relative;width:24px;height:24px;margin-inline-end:.5em;vertical-align:middle}
+.walkthrough-check input[type="checkbox"]:checked::before{position:absolute;left:50%;top:50%;box-sizing:border-box;width:12px;height:7px;margin:-6px 0 0 -6px;transform:rotate(-45deg)}
+.next-up li.ticked label{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.next-up .next-up-advance{margin-top:8px}
 .walkthrough-heading p{font-size:14px}
 .chapter-contents-list a{font-size:14px;padding-block:8px}
 .route-tools,.walkthrough-heading{position:relative}

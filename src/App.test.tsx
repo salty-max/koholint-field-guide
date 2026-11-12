@@ -62,22 +62,28 @@ describe("App", () => {
     expect(useProgress.getState().data.ceiling).toBe(3);
     expect(document.getElementById("section-3-1")).toHaveFocus();
   });
-  it("shows an undo toast after checking a step, and undo restores it", async () => {
+  it("keeps a ticked Next up step in place, undoes it, and advances on request", async () => {
     const user = userEvent.setup();
     history.replaceState(null, "", "/guide/1");
     render(<App />);
-    const nextUp = await screen.findByRole("region", { name: "Next up" });
-    const [first] = within(nextUp).getAllByRole("checkbox");
-    const title = first.id.replace("next-", "");
-    await user.click(first);
-    // A ticked step drops off the Next up list; the toast says what happened.
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).checks[title]).toBe(true);
-    expect(screen.queryByRole("checkbox", { name: new RegExp(`^${first.id}$`) })).toBeNull();
-    expect(document.getElementById(first.id)).not.toBeInTheDocument();
-    const toast = screen.getByRole("group", { name: "Last change" });
-    await user.click(within(toast).getByRole("button", { name: "Undo" }));
-    expect(within(screen.getByRole("region", { name: "Next up" })).getAllByRole("checkbox")[0].id).toBe(first.id);
+    const list = () => within(screen.getByRole("region", { name: "Next up" }));
+    const idsBefore = list().getAllByRole("checkbox").map((box) => box.id);
+    await user.click(list().getAllByRole("checkbox")[0]);
+
+    // Same boxes, same order: nothing jumps. The first is now checked.
+    expect(list().getAllByRole("checkbox").map((box) => box.id)).toEqual(idsBefore);
+    expect(list().getAllByRole("checkbox")[0]).toBeChecked();
+
+    // Undo restores it exactly.
+    await user.click(within(screen.getByRole("group", { name: "Last change" })).getByRole("button", { name: "Undo" }));
+    expect(list().getAllByRole("checkbox")[0]).not.toBeChecked();
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).checks).toEqual({});
+
+    // Tick again, then advance: the list moves on and drops the done step.
+    await user.click(list().getAllByRole("checkbox")[0]);
+    await user.click(list().getByRole("button", { name: "Show next steps" }));
+    expect(list().getAllByRole("checkbox").map((box) => box.id)).not.toContain(idsBefore[0]);
+    expect(list().queryByRole("button", { name: "Show next steps" })).toBeNull();
   });
 
   it("checks a whole section at once and can undo it", async () => {
